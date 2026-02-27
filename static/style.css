@@ -1,0 +1,24 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+nav {
+    margin-bottom: 20px;
+}
+.flash {
+    padding: 10px;
+    margin: 5px 0;
+}
+.flash.success { background-color: #d4edda; color: #155724; }
+.flash.danger { background-color: #f8d7da; color: #721c24; }
+.flash.warning { background-color: #fff3cd; color: #856404; }
+.flash.info { background-color: #cce5ff; color: #004085; }
+textarea {
+    width: 100%;
+    margin-bottom: 10px;
+}
+button {
+    padding: 5px 10px;
+    margin-top: 5px;
+}
+

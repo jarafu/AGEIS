@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stored Threat Reports</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #0b0c10; color: #c5c6c7; margin: 40px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #45a29e; padding: 10px; text-align: left; }
+    th { background: #1f2833; }
+    tr:nth-child(even) { background: #1f2833; }
+    a { color: #66fcf1; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>📋 Stored Threat Reports</h1>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Prompt</th><th>Severity</th><th>Source</th></tr>
+    </thead>
+    <tbody>
+      {% for report in reports %}
+      <tr>
+        <td>{{ report.id }}</td>
+        <td>{{ report.prompt[:100] }}...</td>
+        <td>{{ report.severity }}</td>
+        <td>{{ report.source }}</td>
+      </tr>
+<canvas id="severityChart" width="400" height="200"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('severityChart');
+  const data = {
+    labels: ['Low', 'Medium', 'High'],
+    datasets: [{
+      label: 'Threat Severity Distribution',
+      data: [
+        {{ reports | selectattr('severity', 'equalto', 'Low') | list | length }},
+        {{ reports | selectattr('severity', 'equalto', 'Medium') | list | length }},
+        {{ reports | selectattr('severity', 'equalto', 'High') | list | length }}
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: {
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+</script>
+
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="/">⬅️ Back to Generator</a>
+</body>
+</html>

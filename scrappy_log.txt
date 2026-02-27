@@ -1,0 +1,28 @@
+
+[2024-07-16 10:00:15] INFO: User 'admin' logged in from 192.168.1.1
+[2024-07-16 10:01:22] DEBUG: Starting background job 'cleanup_temp_files'
+[2024-07-16 10:02:00] FIREWALL: ALLOW TCP 192.168.1.50:80 -> 10.0.0.25:443
+[2024-07-16 10:03:11] WARNING: CPU usage high on server 'WEB-01'. Current value: 85%
+[2024-07-16 10:04:56] SYSLOG: User 'backup_user' started a backup job.
+[2024-07-16 10:05:00] ERROR: Failed to connect to database 'orders_db'. Connection timed out.
+[2024-07-16 10:05:30] INFO: User 'jane.doe' accessed file '/documents/report.docx'
+[2024-07-16 10:06:12] FIREWALL: BLOCK UDP 8.8.8.8:53 -> 192.168.1.100:54321
+[2024-07-16 10:07:45] DEBUG: API call to /api/v1/users successful.
+[2024-07-16 10:08:00] INFO: Printer 'HP-LaserJet-Office' is low on toner.
+[2024-07-16 10:09:21] SYSLOG: Service 'apache2' restarted successfully.
+[2024-07-16 10:10:00] FIREWALL: ALLOW TCP 192.168.1.102:61345 -> 185.172.83.25:4444
+[2024-07-16 10:10:01] WIN_EVENT: Security: PID 3452, Process: C:\Users\j.doe\AppData\Local\Temp\svchost.exe, User: John Doe, Host: DESKTOP-4F3G8H, Action: Network Connection, Destination: 185.172.83.25:4444
+[2024-07-16 10:10:03] FIREWALL: ALLOW TCP 192.168.1.102:61346 -> 185.172.83.25:4444
+[2024-07-16 10:10:04] WIN_EVENT: Security: PID 3452, Process: C:\Users\j.doe\AppData\Local\Temp\svchost.exe, User: John Doe, Host: DESKTOP-4F3G8H, Action: Network Connection, Destination: 185.172.83.25:4444
+[2024-07-16 10:11:00] WARNING: Disk space low on 'FILE-SERVER-03'. 5% remaining.
+[2024-07-16 10:11:15] FIREWALL: ALLOW TCP 192.168.1.102:61347 -> 185.172.83.25:4444
+[2024-07-16 10:12:30] INFO: User 'guest' logged out.
+[2024-07-16 10:13:00] ANTIVIRUS: Scan started on DESKTOP-4F3G8H.
+[2024-07-16 10:14:00] FIREWALL: ALLOW TCP 192.168.1.22:8080 -> 172.16.3.45:80
+[2024-07-16 10:15:00] HELPDESK: Ticket #5423 created by 'John Doe'. Subject: 'My computer is running very slow and I see weird pop-up ads.'
+[2024-07-16 10:15:45] DEBUG: Memory usage: 65%
+[2024-07-16 10:16:00] ANTIVIRUS: Scan on DESKTOP-4F3G8H complete. No threats found.
+[2024-07-16 10:17:00] SYSLOG: User 'testuser' failed to authenticate from 10.0.1.123.
+[2024-07-16 10:18:29] FIREWALL: BLOCK ICMP 192.168.1.200 -> 192.168.1.1
+[2024-07-16 10:19:55] INFO: Application 'payroll_app' updated to version 2.3.1.
+[2024-07-16 10:20:00] DEBUG: Cache cleared.

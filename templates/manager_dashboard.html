@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="p-6 bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">🧭 SOC Manager Dashboard</h1>
+
+    <!-- Filter + Search Bar -->
+    <form method="get" url_for('dashboard') class="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white shadow p-4 rounded-2xl mb-6">
+      <div class="flex flex-wrap gap-3 items-center">
+        <select name="severity" class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700">
+          <option value="">All Severities</option>
+          <option value="Critical">Critical</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+
+        <select name="status" class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700">
+          <option value="">All Statuses</option>
+          <option value="Approved">Approved</option>
+          <option value="Pending">Pending</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+
+        <input 
+          type="text" 
+          name="search" 
+          value="{{ request.args.get('search', '') }}"
+          placeholder="Search by keyword or source..." 
+          class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 w-64"
+        />
+      </div>
+
+      <div class="flex gap-2 mt-3 sm:mt-0">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
+          Apply
+        </button>
+        <a href="{{ url_for('manager_dashboard') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow">
+          Reset
+        </a>
+      </div>
+    </form>
+
+    <!-- Chart Section -->
+    <div class="bg-white p-6 rounded-2xl shadow mb-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Incident Severity Overview</h2>
+      <canvas id="managerChart"></canvas>
+    </div>
+
+    <!-- Reports Table -->
+    <div class="bg-white p-6 rounded-2xl shadow mb-10">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Review and Approve Reports</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-gray-700 border">
+          <thead class="bg-gray-100 text-gray-800">
+            <tr>
+              <th class="px-4 py-2 text-left">ID</th>
+              <th class="px-4 py-2 text-left">Severity</th>
+              <th class="px-4 py-2 text-left">Source</th>
+              <th class="px-4 py-2 text-left">Status</th>
+              <th class="px-4 py-2 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for report in reports %}
+            <tr class="border-t hover:bg-gray-50 transition">
+              <td class="px-4 py-2">{{ report.id }}</td>
+              <td class="px-4 py-2 font-semibold text-{{ 'red-600' if report.severity == 'Critical' else 'orange-500' if report.severity == 'High' else 'yellow-500' if report.severity == 'Medium' else 'green-600' }}">{{ report.severity }}</td>
+              <td class="px-4 py-2">{{ report.source }}</td>
+              <td class="px-4 py-2">
+                {% if report.status == 'Approved' %}
+                  <span class="bg-green-100 text-green-700 px-2 py-1 rounded-lg text-xs font-semibold">Approved</span>
+                {% elif report.status == 'Rejected' %}
+                  <span class="bg-red-100 text-red-700 px-2 py-1 rounded-lg text-xs font-semibold">Rejected</span>
+                {% else %}
+                  <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg text-xs font-semibold">Pending</span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-2 flex gap-2">
+                <button data-modal-target="modal-{{ report.id }}" data-modal-toggle="modal-{{ report.id }}"
+                  class="text-blue-600 hover:underline">View</button>
+                <a href="{{ url_for('download_report', report_id=report.id) }}" class="text-green-600 hover:underline">Download</a>
+                {% if report.status != 'Approved' %}
+                <form method="post" action="{{ url_for('approve_report', report_id=report.id) }}">
+                  <button type="submit" class="text-green-700 hover:text-green-800 font-semibold">Approve</button>
+                </form>
+                {% endif %}
+                {% if report.status != 'Rejected' %}
+                <form method="post" action="{{ url_for('reject_report', report_id=report.id) }}">
+                  <button type="submit" class="text-red-700 hover:text-red-800 font-semibold">Reject</button>
+                </form>
+                {% endif %}
+              </td>
+            </tr>
+            <!-- REPORT MODAL -->
+            <div id="modal-{{ report.id }}" tabindex="-1" aria-hidden="true"
+              class="hidden fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-60">
+              <div class="relative p-6 w-full max-w-3xl bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-y-auto max-h-[90vh]">
+                <button type="button" class="absolute top-3 right-3 text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                  data-modal-hide="modal-{{ report.id }}">✕</button>
+                <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Incident Report #{{ report.id }}</h3>
+                <div class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-line mb-6">
+                  {{ report.report }}
+                </div>
+                <div class="flex justify-end gap-3">
+                  <a href="{{ url_for('download_report', report_id=report.id) }}"
+                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">Download PDF</a>
+                  <button data-modal-hide="modal-{{ report.id }}"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition">Close</button>
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <tr><td colspan="7" class="text-center py-4 text-gray-500">No reports found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pending User Approvals -->
+    <div class="bg-white p-6 rounded-2xl shadow">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Pending User Approvals</h2>
+
+      {% if pending_users %}
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-gray-700 border rounded-lg">
+          <thead class="bg-gray-100 text-gray-800">
+            <tr>
+              <th class="px-4 py-2 text-left">Username</th>
+              <th class="px-4 py-2 text-left">Email</th>
+              <th class="px-4 py-2 text-left">Role</th>
+              <th class="px-4 py-2 text-left">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in pending_users %}
+            <tr class="border-t hover:bg-gray-50 transition">
+              <td class="px-4 py-2 font-medium">{{ user.username }}</td>
+              <td class="px-4 py-2">{{ user.email }}</td>
+              <td class="px-4 py-2">
+                <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-lg text-xs font-semibold">{{ user.role }}</span>
+              </td>
+              <td class="px-4 py-2">
+                <form method="post" action="{{ url_for('approve_user', user_id=user.id) }}">
+                  <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg transition">Approve</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-gray-500">No pending users awaiting approval.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('managerChart').getContext('2d');
+const data = {
+  labels: ['Critical', 'High', 'Medium', 'Low'],
+  datasets: [{
+    label: 'Incident Severity',
+    data: [
+      {{ critical_count }},
+      {{ high_count }},
+      {{ medium_count }},
+      {{ low_count }}
+    ],
+    backgroundColor: ['#dc2626', '#ea580c', '#facc15', '#16a34a']
+  }]
+};
+
+new Chart(ctx, {
+  type: 'bar',
+  data,
+  options: {
+    plugins: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Current Incident Severity Breakdown'
+      }
+    },
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+</script>
+
+{% endblock %}
+

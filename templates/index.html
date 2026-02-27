@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🛡️ AGEIS – AI Threat Analyst</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #0b0c10;
+      color: #c5c6c7;
+    }
+    textarea, input[type=text] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+      background: #1f2833;
+      color: #c5c6c7;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: #45a29e;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #66fcf1;
+      color: #000;
+    }
+    .report-box {
+      background: #1f2833;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+    .reliability-card {
+      margin-top: 25px;
+      padding: 15px;
+      background: #162229;
+      border-left: 5px solid #45a29e;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛡️ AGEIS– AI Threat Intelligence Assistant</h1>
+  <form method="POST">
+    <label for="prompt">Enter threat or incident details:</label>
+    <textarea name="prompt" rows="5" required></textarea>
+    <button type="submit">Generate Report</button>
+  </form>
+
+  {% if report %}
+    <div class="report-box">
+      <h3>Generated Report:</h3>
+      <p>{{ report }}</p>
+    </div>
+
+    <form method="POST" action="/download">
+      <input type="hidden" name="report" value="{{ report }}">
+      <input type="hidden" name="prompt" value="{{ prompt }}">
+      <button type="submit">⬇️ Download Report</button>
+    </form>
+  {% endif %}
+
+  {% if metadata %}
+    <div class="reliability-card">
+      <h3>🔍 ARIes Reliability Summary</h3>
+      <ul>
+        <li><strong>Confidence Score:</strong> {{ metadata.confidence }}%</li>
+        <li><strong>Verification Tags:</strong> {{ metadata.verification_tags }}</li>
+        <li><strong>Refinement Loops:</strong> {{ metadata.loop_count }}</li>
+      </ul>
+    </div>
+  {% endif %}
+</body>
+</html>
+

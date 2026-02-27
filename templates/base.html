@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <title>AGEIS SOC</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Flowbite -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
+    <!-- Smooth UI, Matches Auth Form Theme -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        nav {
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn {
+            padding: 0.45rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: 0.25s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        footer {
+            backdrop-filter: blur(10px);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.07);
+        }
+
+        .dark .card {
+            background: #1f2937;
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .flash-message {
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            font-weight: 500;
+        }
+
+        .fade-in {
+            animation: fade 0.4s ease;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900 flex flex-col min-h-screen">
+
+    <!-- NAVBAR -->
+    <nav class="bg-gray-800/90 dark:bg-gray-700/80 text-white p-4 flex justify-between items-center shadow-lg">
+        <div class="text-2xl font-extrabold tracking-wide text-blue-300">
+            🛡️ AGEIS SOC
+        </div>
+
+        <div class="flex items-center gap-4">
+
+            <!-- Dark Mode Toggle -->
+            <button id="theme-toggle"
+                class="nav-btn bg-gray-700 dark:bg-gray-200 text-white dark:text-black shadow-md">
+                Toggle Theme
+            </button>
+
+            {% if current_user.is_authenticated %}
+                <span class="px-3 py-1 bg-blue-600/30 rounded-lg font-medium">
+                    {{ current_user.username }} ({{ current_user.role }})
+                </span>
+
+                <a href="{{ url_for('logout') }}"
+                   class="nav-btn bg-red-600 hover:bg-red-700 shadow-md">
+                    Logout
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}"
+                   class="nav-btn bg-blue-600 hover:bg-blue-700 shadow-md">
+                    Login
+                </a>
+
+                <a href="{{ url_for('register') }}"
+                   class="nav-btn bg-green-600 hover:bg-green-700 shadow-md">
+                    Register
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="container mx-auto mt-8 px-4 flex-1 fade-in">
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="flash-message mb-4 
+                        {% if category == 'success' %} bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 {% endif %}
+                        {% if category == 'danger' %} bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100 {% endif %}
+                        {% if category == 'warning' %} bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 {% endif %}
+                        {% if category == 'info' %} bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 {% endif %}
+                    ">
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-800/90 dark:bg-gray-700/80 text-white text-center p-4 mt-8 shadow-lg">
+        AGEIS SOC Automation Platform © 2025
+    </footer>
+
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const htmlEl = document.documentElement;
+
+        toggleBtn.addEventListener('click', () => {
+            htmlEl.classList.toggle('dark');
+            htmlEl.classList.toggle('light');
+        });
+    </script>
+</body>
+</html>
+
